@@ -1,0 +1,12 @@
+# hidden directories
+/.vscode/
+
+# dataset
+/data/
+/dataset/
+
+# output files
+/output/
+
+# cache files
+*__pycache__*

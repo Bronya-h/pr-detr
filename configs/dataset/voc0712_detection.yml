@@ -1,0 +1,35 @@
+task: detection
+
+num_classes: 20
+# remap_mscoco_category: True
+
+train_dataloader: 
+  type: DataLoader
+  dataset: 
+    type: CocoDetection
+    img_folder: ./dataset/voc0712/trainval0712
+    ann_file: ./dataset/voc0712/annotations/instances_trainval0712.json
+    transforms:
+      type: Compose
+      ops: ~
+  shuffle: True
+  batch_size: 8
+  num_workers: 8
+  drop_last: True 
+
+
+val_dataloader:
+  type: DataLoader
+  dataset: 
+    type: CocoDetection
+    img_folder: ./dataset/voc0712/test0712
+    ann_file: ./dataset/voc0712/annotations/instances_test0712.json
+    transforms:
+      type: Compose
+      ops: ~ 
+
+  shuffle: False
+  batch_size: 8
+  num_workers: 8
+  drop_last: False
+  
