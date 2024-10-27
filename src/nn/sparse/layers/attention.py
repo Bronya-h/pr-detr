@@ -307,7 +307,6 @@ class SparseMultiHeadAttentionViT(MultiHeadAttentionViT):
         to_device = self.fc_q.weight.device
 
         if self.search_type == "embed":
-            """ embedding剪枝 """
             prune_linear_layer(self.fc_q, mask=out_ch_mask, direction='output')
             prune_linear_layer(self.fc_k, mask=out_ch_mask, direction='output')
             prune_linear_layer(self.fc_v, mask=out_ch_mask, direction='output')
@@ -475,21 +474,6 @@ class SrMultiHeadAttentionViT(MultiHeadAttentionViT):
         spatial_shapes: list = None,
         **kwargs,
     ):
-        """
-        计算多头自注意力机制的前向传播。
-        
-        Args:
-            queries (torch.Tensor): 查询张量，形状为 [batch_size, num_queries, dim_query]。
-            keys (torch.Tensor): 键张量，形状为 [batch_size, num_keys, dim_key]。
-            values (torch.Tensor): 值张量，形状为 [batch_size, num_values, dim_value]。
-            attention_mask (torch.Tensor, optional): 注意力掩码张量，用于屏蔽某些位置上的注意力。默认为 None。
-            attention_weights (torch.Tensor, optional): 注意力权重张量，用于加权注意力得分。默认为 None。
-            **kwargs: 其他关键字参数。
-        
-        Returns:
-            torch.Tensor: 输出张量，形状为 [batch_size, num_queries, dim_output]。
-        
-        """
         if self.can_be_stateful and self._is_stateful:
             self.running_keys = torch.cat([self.running_keys, keys], 1)
             keys = self.running_keys
@@ -622,9 +606,7 @@ class SrMultiHeadAttentionViT(MultiHeadAttentionViT):
 
 
 class SrSparseMultiHeadAttentionViT(SparseMultiHeadAttentionViT):
-    """Multiscale Spatial Reduction Multiple Head Attention.
-    多尺度空间下采样多头注意力机制。"""
-
+    """Multiscale Spatial Reduction Multiple Head Attention."""
     def __init__(
         self,
         d_model,
@@ -712,20 +694,20 @@ class SrSparseMultiHeadAttentionViT(SparseMultiHeadAttentionViT):
         **kwargs,
     ):
         """
-        计算多头自注意力机制的前向传播。
-        
+        Compute the forward propagation of the multi-head self-attention mechanism.
+
         Args:
-            queries (torch.Tensor): 查询张量，形状为 [batch_size, num_queries, dim_query]。
-            keys (torch.Tensor): 键张量，形状为 [batch_size, num_keys, dim_key]。
-            values (torch.Tensor): 值张量，形状为 [batch_size, num_values, dim_value]。
-            attention_mask (torch.Tensor, optional): 注意力掩码张量，用于屏蔽某些位置上的注意力。默认为 None。
-            attention_weights (torch.Tensor, optional): 注意力权重张量，用于加权注意力得分。默认为 None。
-            **kwargs: 其他关键字参数。
-        
+            queries (torch.Tensor): The query tensor, with a shape of [batch_size, num_queries, dim_query].
+            keys (torch.Tensor): The key tensor, with a shape of [batch_size, num_keys, dim_key].
+            values (torch.Tensor): The value tensor, with a shape of [batch_size, num_values, dim_value].
+            attention_mask (torch.Tensor, optional): The attention mask tensor used to mask attention at certain positions. Defaults to None.
+            attention_weights (torch.Tensor, optional): The attention weight tensor used to weight the attention scores. Defaults to None.
+            **kwargs: Additional keyword arguments.
+
         Returns:
-            torch.Tensor: 输出张量，形状为 [batch_size, num_queries, dim_output]。
-        
+            torch.Tensor: The output tensor, with a shape of [batch_size, num_queries, dim_output].
         """
+
         if self.can_be_stateful and self._is_stateful:
             self.running_keys = torch.cat([self.running_keys, keys], 1)
             keys = self.running_keys
@@ -928,18 +910,18 @@ class FocusedSrSparseMultiHeadAttentionViT(SrSparseMultiHeadAttentionViT):
         **kwargs,
     ):
         """
-        计算多头自注意力机制的前向传播。
-        
+        Compute the forward pass of the multi-head self-attention mechanism.
+
         Args:
-            queries (torch.Tensor): 查询张量，形状为 [batch_size, num_queries, dim_query]。
-            keys (torch.Tensor): 键张量，形状为 [batch_size, num_keys, dim_key]。
-            values (torch.Tensor): 值张量，形状为 [batch_size, num_values, dim_value]。
-            attention_mask (torch.Tensor, optional): 注意力掩码张量，用于屏蔽某些位置上的注意力。默认为 None。
-            attention_weights (torch.Tensor, optional): 注意力权重张量，用于加权注意力得分。默认为 None。
-            **kwargs: 其他关键字参数。
-        
+            queries (torch.Tensor): The tensor of queries, shaped as [batch_size, num_queries, dim_query].
+            keys (torch.Tensor): The tensor of keys, shaped as [batch_size, num_keys, dim_key].
+            values (torch.Tensor): The tensor of values, shaped as [batch_size, num_values, dim_value].
+            attention_mask (torch.Tensor, optional): The tensor of the attention mask, used to mask attention at certain positions. Defaults to None.
+            attention_weights (torch.Tensor, optional): The tensor of attention weights, used to weight the attention scores. Defaults to None.
+            **kwargs: Additional keyword arguments.
+
         Returns:
-            torch.Tensor: 输出张量，形状为 [batch_size, num_queries, dim_output]。
+            torch.Tensor: The output tensor, shaped as [batch_size, num_queries, dim_output].
         
         """
         if self.can_be_stateful and self._is_stateful:
@@ -1179,7 +1161,6 @@ class FocusedSrSparseMultiHeadAttentionViT(SrSparseMultiHeadAttentionViT):
         to_device = self.fc_q.weight.device
 
         if self.search_type == "embed":
-            """ embedding剪枝 """
             prune_linear_layer(self.fc_q, mask=out_ch_mask, direction='output')
             prune_linear_layer(self.fc_k, mask=out_ch_mask, direction='output')
             prune_linear_layer(self.fc_v, mask=out_ch_mask, direction='output')
@@ -1226,9 +1207,9 @@ class MSDeformableAttention(nn.Module):
         """
         super(MSDeformableAttention, self).__init__()
         self.embed_dim = embed_dim
-        self.head_num = head_num  # 论文符号M
-        self.num_levels = num_levels  # 论文符号L
-        self.num_points = num_points  # 论文符号K
+        self.head_num = head_num
+        self.num_levels = num_levels  
+        self.num_points = num_points
         self.total_points = head_num * num_levels * num_points
 
         self.head_dim = embed_dim // head_num
@@ -1236,9 +1217,9 @@ class MSDeformableAttention(nn.Module):
 
         self.sampling_offsets = nn.Linear(
             embed_dim,
-            self.total_points * 2,  # 前两个通道，2MK。多尺度是2MLK
+            self.total_points * 2,
         )
-        self.attention_weights = nn.Linear(embed_dim, self.total_points)  # 后一个通道, MK。多尺度是MLK
+        self.attention_weights = nn.Linear(embed_dim, self.total_points)
         self.value_proj = nn.Linear(embed_dim, embed_dim)
         self.output_proj = nn.Linear(embed_dim, embed_dim)
 
@@ -1288,12 +1269,9 @@ class MSDeformableAttention(nn.Module):
         if value_mask is not None:
             value_mask = value_mask.astype(value.dtype).unsqueeze(-1)
             value *= value_mask
-        value = value.reshape(bs, Len_v, self.head_num, self.head_dim)  # value为每个head分配输入数据, [8, 10164, 8, 32]
-        # 采样偏置 [bs, lenq, M, L, K, 2]--[8, 492, 8, 3, 4, 2]
+        value = value.reshape(bs, Len_v, self.head_num, self.head_dim)
         sampling_offsets = self.sampling_offsets(query).reshape(bs, Len_q, self.head_num, self.num_levels, self.num_points, 2)
-        # 获得各个参考点的注意力加权 成 [bs, lenq, M, L*K]--[8, 492, 8, 12]
         attention_weights = self.attention_weights(query).reshape(bs, Len_q, self.head_num, self.num_levels * self.num_points)
-        # 多尺度上进行各个参考点的softmax，所有参考点概率和为1。[bs, lenq, M, L, K] -- [8, 492, 8, 3, 4]
         attention_weights = F.softmax(attention_weights, dim=-1).reshape(bs, Len_q, self.head_num, self.num_levels, self.num_points)
 
         if reference_points.shape[-1] == 2:  # [8, 492, 1, 2]
@@ -1301,15 +1279,13 @@ class MSDeformableAttention(nn.Module):
             offset_normalizer = offset_normalizer.flip([1]).reshape(1, 1, 1, self.num_levels, 1, 2)
             sampling_locations = reference_points.reshape(bs, Len_q, 1, self.num_levels, 1, 2) + sampling_offsets / offset_normalizer
         elif reference_points.shape[-1] == 4:  # [8, 492, 1, 4]
-            # [8, 492, 1, 1, 1, 2] 在(w,h)两个维度上乘sampling_offsets，对w/h进行伸缩。
             sampling_locations = (reference_points[:, :, None, :, None, :2] + sampling_offsets / self.num_points * reference_points[:, :, None, :, None, 2:] * 0.5)
         else:
             raise ValueError("Last dim of reference_points must be 2 or 4, but get {} instead.".format(reference_points.shape[-1]))
 
-        # output = self.ms_deformable_attn_core(value, value_spatial_shapes, sampling_locations, attention_weights)
         output = self.deformable_attention_core_func(value, value_spatial_shapes, sampling_locations, attention_weights)  # [8, 492, 256]
 
-        output = self.output_proj(output)  # 线性层映射，使output参数得到一个聚合。
+        output = self.output_proj(output)
 
         return output
 
@@ -1331,9 +1307,7 @@ class MSDeformableAttention(nn.Module):
         _, Len_q, _, n_levels, n_points, _ = sampling_locations.shape  # [8, 492, 8, 3, 4, 2]
 
         split_shape = [h * w for h, w in value_spatial_shapes]  # [5184, 1296, 324]
-        # 每个尺度的value用split分离出来
         value_list = value.split(split_shape, dim=1)  # [[8, 5184, 8, 32], [8, 1296, 8, 32], [8, 324, 8, 32]]
-        # [0, 1]范围的samp_loc放缩偏移到[-1, 1]
         sampling_grids = 2 * sampling_locations - 1  # [8, 492, 8, 3, 4, 2]
         sampling_value_list = []
         for level, (h, w) in enumerate(value_spatial_shapes):
@@ -1343,16 +1317,12 @@ class MSDeformableAttention(nn.Module):
             # [N_, Lq_, M_, P_, 2] -> [N_, M_, Lq_, P_, 2] -> [N_*M_, Lq_, P_, 2]
             sampling_grid_l_ = sampling_grids[:, :, :, level].permute(0, 2, 1, 3, 4).flatten(0, 1)  # [64, 500, 4, 2]
             # N_*M_, D_, Lq_, P_
-            # 用双线性插值，用sampling_grid预测的偏移点的对周围4个点进行不同权重的上采样，形状从[N_*M_, D_, H_, W_]变为[N_*M_, D_, Lq_, P_]
             sampling_value_l_ = F.grid_sample(value_l_, sampling_grid_l_, mode='bilinear', padding_mode='zeros', align_corners=False)  # [64, 32, 500, 4]
             sampling_value_list.append(sampling_value_l_)
         # (N_, Lq_, M_, L_, P_) -> (N_, M_, Lq_, L_, P_) -> (N_*M_, 1, Lq_, L_*P_)
         attention_weights = attention_weights.permute(0, 2, 1, 3, 4).reshape(bs * n_head, 1, Len_q, n_levels * n_points)
-        """此处是DeformableAttention论文中的Aggregated过程。"""
-        # 聚合多尺度后的samp_value与atten_weight: (N_*M_, D_, Lq_, L_*P_) * (N_*M_, 1, Lq_, L_*P_)
-        # 在最后一维进行sum, [N_*M_, D_, Lq_], reshape后[N_, M_*D_, Lq_]
+        """This section is the Aggregated process from the DeformableAttention paper."""
         output = (torch.stack(sampling_value_list, dim=-2).flatten(-2) * attention_weights).sum(-1).reshape(bs, n_head * c, Len_q)
-        # permute成[N_, Lq_, M_*D_], 其中M_*D_与value的维度相同。
         return output.permute(0, 2, 1)
 
 
@@ -1377,7 +1347,6 @@ class SrMSDeformableAttention(MSDeformableAttention):
                 self.sr_layer = ConvNormLayer(embed_dim, embed_dim, kernel_size=sr_ratio, stride=sr_ratio, norm_layer='layer')
             else:
                 self.sr_layer = nn.Sequential(
-                    # nn.AdaptiveAvgPool2d(output_size=7),
                     ConvNormLayer(embed_dim, embed_dim, kernel_size=1, stride=1, norm_layer='layer'),
                     nn.GELU(),
                 )
@@ -1411,7 +1380,6 @@ class SrMSDeformableAttention(MSDeformableAttention):
 
         if self.sr_ratio > 1:  # do spatial reduction operation
             split_shape = [h * w for h, w in value_spatial_shapes]  # [5184, 1296, 324]
-            # 每个尺度的value用split分离出来
             value_list = value.split(split_shape, dim=1)  # [[8, 5184, 256], [8, 1296, 256], [8, 324, 256]]
             sr_spatial_shapes = []
             sr_value_list = []
@@ -1440,15 +1408,15 @@ class SrMSDeformableAttention(MSDeformableAttention):
             value_mask = value_mask.astype(value.dtype).unsqueeze(-1)
             value *= value_mask
 
-        value = value.reshape(bs, Len_v, self.head_num, self.head_dim)  # value为每个head分配输入数据, [8, 10164, 8, 32]
+        value = value.reshape(bs, Len_v, self.head_num, self.head_dim)  # [8, 10164, 8, 32]
 
-        # 采样偏置 [bs, lenq, M, L, K, 2]--[8, 492, 8, 3, 4, 2]
+        # [bs, lenq, M, L, K, 2]--[8, 492, 8, 3, 4, 2]
         sampling_offsets = self.sampling_offsets(query)  # [8, 492, 8*3*4*2]
         sampling_offsets = sampling_offsets.reshape(bs, Len_q, self.head_num, self.num_levels, self.num_points, 2)
-        # 获得各个参考点的注意力加权 成 [bs, lenq, M, L*K]--[8, 492, 8, 12]
+        #  [bs, lenq, M, L*K]--[8, 492, 8, 12]
         attention_weights = self.attention_weights(query)  # [8, 492, 8*12]
         attention_weights = attention_weights.reshape(bs, Len_q, self.head_num, self.num_levels * self.num_points)
-        # 多尺度上进行各个参考点的softmax，所有参考点概率和为1。[bs, lenq, M, L, K]--[8, 492, 8, 3, 4]
+        # [bs, lenq, M, L, K]--[8, 492, 8, 3, 4]
         attention_weights = F.softmax(attention_weights, dim=-1)
         attention_weights = attention_weights.reshape(bs, Len_q, self.head_num, self.num_levels, self.num_points)
 
@@ -1524,7 +1492,6 @@ class SparseMSDeformableAttention(MSDeformableAttention):
         bs, Len_q = query.shape[:2]  # 8, 492
         Len_v = value.shape[1]  # value [8, 10164, 256]
 
-        # TODO:spatial reduce
         value = self.value_proj(value)
         if value_mask is not None:
             value_mask = value_mask.astype(value.dtype).unsqueeze(-1)
@@ -1535,13 +1502,13 @@ class SparseMSDeformableAttention(MSDeformableAttention):
             z = self.searched_zeta if self.is_searched else self.zeta
             value = value * z
 
-        # 采样偏置 [bs, lenq, M, L, K, 2]--[8, 492, 8, 3, 4, 2]
+        # [bs, lenq, M, L, K, 2]--[8, 492, 8, 3, 4, 2]
         sampling_offsets = self.sampling_offsets(query)  # [8, 492, 8*3*4*2]
         sampling_offsets = sampling_offsets.reshape(bs, Len_q, self.head_num, self.num_levels, self.num_points, 2)
-        # 获得各个参考点的注意力加权 成 [bs, lenq, M, L*K]--[8, 492, 8, 12]
+        # [bs, lenq, M, L*K]--[8, 492, 8, 12]
         attention_weights = self.attention_weights(query)  # [8, 492, 8*12]
         attention_weights = attention_weights.reshape(bs, Len_q, self.head_num, self.num_levels * self.num_points)
-        # 多尺度上进行各个参考点的softmax，所有参考点概率和为1。[bs, lenq, M, L, K]--[8, 492, 8, 3, 4]
+        # [bs, lenq, M, L, K]--[8, 492, 8, 3, 4]
         attention_weights = F.softmax(attention_weights, dim=-1)
         attention_weights = attention_weights.reshape(bs, Len_q, self.head_num, self.num_levels, self.num_points)
 
@@ -1550,14 +1517,14 @@ class SparseMSDeformableAttention(MSDeformableAttention):
             offset_normalizer = offset_normalizer.flip([1]).reshape(1, 1, 1, self.num_levels, 1, 2)
             sampling_locations = reference_points.reshape(bs, Len_q, 1, self.num_levels, 1, 2) + sampling_offsets / offset_normalizer
         elif reference_points.shape[-1] == 4:  # [8, 492, 1, 4]
-            # [8, 492, 1, 1, 1, 2] 在(w,h)两个维度上乘sampling_offsets，对w/h进行伸缩。
+            # [8, 492, 1, 1, 1, 2] Multiply by sampling_offsets on the two dimensions (w, h), scaling the width/height.
             sampling_locations = (reference_points[:, :, None, :, None, :2] + sampling_offsets / self.num_points * reference_points[:, :, None, :, None, 2:] * 0.5)
         else:
             raise ValueError("Last dim of reference_points must be 2 or 4, but get {} instead.".format(reference_points.shape[-1]))
 
         output = self.deformable_attention_core_func(value, value_spatial_shapes, sampling_locations, attention_weights)  # [8, 492, 256]
 
-        output = self.output_proj(output)  # 线性层映射，使output参数得到一个聚合。
+        output = self.output_proj(output)
 
         return output
 
@@ -1569,7 +1536,7 @@ class SparseMSDeformableAttention(MSDeformableAttention):
         self.searched_zeta = (self.zeta >= threshold_attn).float()
 
         activate_gates = torch.sum(self.searched_zeta)
-        if activate_gates / self.num_gates < min_gates_ratio:  # 触发保底机制，防止输出层的神经元个数为0
+        if activate_gates / self.num_gates < min_gates_ratio:
             thres_rank = min(self.num_gates - 1, max(0, int((1 - min_gates_ratio) * self.num_gates)))
             act_thres = torch.sort(torch.squeeze(self.get_zeta())).values[thres_rank]
             self.searched_zeta = (self.get_zeta() >= act_thres).float()
@@ -1581,11 +1548,6 @@ class SparseMSDeformableAttention(MSDeformableAttention):
         self.zeta.requires_grad = True
 
     def prune_input_channel(self, in_ch_mask):
-        """剪枝输入通道
-
-        Arguments:
-            in_ch_mask -- 输入通道的剪枝的Hard Mask.
-        """
         if in_ch_mask.dtype != torch.bool:
             in_ch_mask = in_ch_mask.to(torch.bool)
 
@@ -1602,8 +1564,6 @@ class SparseMSDeformableAttention(MSDeformableAttention):
             self.attention_weights.weight.grad = nn.Parameter(self.attention_weights.weight[:, in_ch_mask])
 
     def prune_output_channel(self):
-        """剪枝隐层的输出通道.
-        """
         if self.search_type == "embed":
             out_ch_mask = torch.squeeze(self.searched_zeta)
             if out_ch_mask.dtype != torch.bool:
